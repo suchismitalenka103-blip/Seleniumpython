@@ -11,17 +11,51 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # 1️⃣ Checkout code
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    # 2️⃣ Setup Python
     - name: Setup Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.10'
 
-    # 3️⃣ Install Python dependencies
     - name: Install dependencies
       run: |
-        python -
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Set up Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '21'
+
+    - name: Install Allure
+      run: |
+        ALLURE_VERSION=2.36.0
+        wget https://github.com/allure-framework/allure2/releases/download/${ALLURE_VERSION}/allure-${ALLURE_VERSION}.tgz
+        tar -zxvf allure-${ALLURE_VERSION}.tgz
+        sudo mv allure-${ALLURE_VERSION} /opt/allure
+        sudo ln -s /opt/allure/bin/allure /usr/bin/allure
+
+    # ✅ Run tests but don’t stop pipeline if they fail
+    - name: Run Tests with Allure
+      run: |
+        pytest --alluredir=allure-results || true
+
+    # ✅ Check if results exist before generating report
+    - name: Generate Allure Report
+      run: |
+        if [ -d "allure-results" ]; then
+          allure generate allure-results --clean -o allure-report
+        else
+          echo "No allure-results folder found"
+        fi
+
+    # ✅ Always try to upload artifact
+    - name: Upload Allure Report
+      uses: actions/upload-artifact@v4
+      with:
+        name: Allure-Report
+        path: allure-report
+        if-no-files-found: warn

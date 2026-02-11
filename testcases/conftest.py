@@ -15,6 +15,8 @@ options.add_argument("--guest")
 def tc_setup(request):
     options.add_argument("--no-sandbox")
     options.add_argument("--guest")
+    # options.add_argument("")
+    options.add_argument("--headless")
     driver = webdriver.Chrome(options=options)
     driver.maximize_window()
     driver.get("https://www.saucedemo.com/")

@@ -14,8 +14,9 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 // Upgrade pip and install required packages
-                bat 'python -m pip install --upgrade pip'
-                bat 'python -m pip install -r requirements.txt'
+
+                 bat '"C:\\Users\\suchismita.lenka\\AppData\\Local\\Programs\\Python\\Python311\\python.exe" -m pip install --upgrade pip'
+                 bat '"C:\\Users\\suchismita.lenka\\AppData\\Local\\Programs\\Python\\Python311\\python.exe" -m pip install -r requirements.txt'
             }
         }
 
